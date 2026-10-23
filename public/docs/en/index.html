@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Reference for the sample language — run any example in the Playground">
+    <meta name="description" content="The Analogia reference — every sample runs in the Playground">
     <meta name="theme-color" content="#6b5b95">
     <title>Reference</title>
 
     <!--
-      The Reference for the sample language. The English and Japanese
+      The Reference for Analogia. The English and Japanese
       versions share structure, ids and sample code; only the prose differs.
       Look and behavior live in ../reference.css and ../reference.js.
       Mathematics is LaTeX typeset by the self-hosted KaTeX: only \( ... \)
@@ -26,7 +26,7 @@
             <div class="app-brand-meta">
                 <a href="../../index.html" class="app-brand-block" aria-label="Playground">
                     <img src="../../images/QR_341216.png" alt="" class="logo" aria-hidden="true">
-                    <h1>Ajisai</h1>
+                    <h1>Analogia</h1>
                 </a>
                 <span class="ref-tagline">Reference</span>
                 <label for="lang-select" class="visually-hidden">言語を選択 / Select language</label>
@@ -50,36 +50,35 @@
             <article class="ref-article">
                 <section id="intro" class="ref-page">
                     <h2>Introduction</h2>
-                    <p>This is the reference for the <strong>sample language</strong> that ships with this template: a tiny stack language whose only job is to exercise every part of the Playground. Replace the Rust core in <code>rust/</code> with your own and rewrite this page to match.</p>
-                    <p>A program is a sequence of elements separated by whitespace, evaluated left to right. Numbers, strings and Vectors are pushed onto the stack; a name runs the Word it names.</p>
-                    <p>Every example has an <strong>Open in Playground</strong> button that loads its code into the editor. The <strong>Expected value</strong> column shows the stack after the run, as the Stack area draws it.</p>
+                    <p><strong>Analogia</strong> is a language for building and running hydraulic analog computers like MONIAC (the Phillips machine). Tanks hold a quantity, pipes move it, and <code>RUN</code> lets time flow continuously.</p>
+                    <p>A program is a whitespace-separated sequence evaluated left to right (postfix). Numbers, strings and blocks are pushed on the stack; a name runs its word.</p>
+                    <p>Each sample's <strong>Open in Playground</strong> button loads the first row's code into the editor. The <strong>Expected</strong> column shows the top of the stack after running the rows so far, as the Stack area draws it.</p>
                 </section>
 
                 <section id="values" class="ref-page">
                     <h2><span class="secnum">1</span> Values</h2>
-                    <p>Numbers are exact fractions: <code>1/3</code>, <code>0.25</code> and <code>42</code> are all written and kept exactly, and are drawn as <code>numerator/denominator</code>. Strings are written in single quotes. <code>TRUE</code>, <code>FALSE</code> and <code>NIL</code> are values too.</p>
-                    <p><code>[ ... ]</code> builds a Vector. Nothing inside it runs: a name inside a Vector stays a name, which is how blocks of code are written.</p>
+                    <p>Numbers are continuous quantities (double-precision floats): <code>1/4</code>, <code>0.25</code> and <code>2e-3</code> all read. The Stack area shows them as fractions of up to six decimal places, marked <code>≈</code> when rounded. Strings are single-quoted; <code>TRUE</code>, <code>FALSE</code> and <code>NIL</code> are values too. <code>[ ... ]</code> is a block that is not run: it becomes a pipe's rate or a User word's body.</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
                             <thead>
-                                <tr><th>Sample code</th><th>Expected value</th><th>Notes</th></tr>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td><code>0.1 0.2 ADD</code></td>
-                                    <td><code>3/10</code></td>
-                                    <td class="notes">Decimals are exact; there is no rounding.</td>
+                                    <td><code>≈ 3/10</code></td>
+                                    <td class="notes">A floating-point sum carries a tiny error, so it is marked ≈.</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ 1 2 3 ]</code></td>
-                                    <td><code>[ 1/1 2/1 3/1 ]</code></td>
-                                    <td class="notes">A Vector of three numbers.</td>
+                                    <td><code>1 3 DIV</code></td>
+                                    <td><code>≈ 333333/1000000</code></td>
+                                    <td class="notes">Rounded, so it is marked ≈.</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ DUP MUL ]</code></td>
-                                    <td><code>[ DUP MUL ]</code></td>
-                                    <td class="notes">A block: the names are kept, not run.</td>
+                                    <td><code>[ BATH 0.1 MUL ]</code></td>
+                                    <td><code>[ BATH 1/10 MUL ]</code></td>
+                                    <td class="notes">A block: its names are not run.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -92,24 +91,18 @@
 
                 <section id="arithmetic" class="ref-page">
                     <h2><span class="secnum">2</span> Arithmetic and comparison</h2>
-                    <p><code>ADD</code>, <code>SUB</code>, <code>MUL</code> and <code>DIV</code> take two numbers. When either side is a Vector they work element by element, and a number pairs with every element. Dividing by zero is an error.</p>
-                    <p><code>EQ</code> answers whether two values are equal; <code>LT</code> whether the second number is less than the top one.</p>
+                    <p><code>ADD</code>, <code>SUB</code>, <code>MUL</code>, <code>DIV</code>, <code>MIN</code> and <code>MAX</code> take two numbers (element by element when one is a Vector). <code>EQ</code>, <code>LT</code> and <code>GT</code> answer a Boolean, and <code>condition a b IF</code> leaves a when the condition holds, else b. <code>DUP</code>, <code>DROP</code> and <code>SWAP</code> work the stack; <code>PRINT</code> writes to the Output area.</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
                             <thead>
-                                <tr><th>Sample code</th><th>Expected value</th><th>Notes</th></tr>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td><code>3 4 ADD</code></td>
                                     <td><code>7/1</code></td>
-                                    <td class="notes">Both operands are consumed and the sum is pushed.</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1 3 DIV</code></td>
-                                    <td><code>1/3</code></td>
-                                    <td class="notes">Division stays exact.</td>
+                                    <td class="notes"></td>
                                 </tr>
                                 <tr>
                                     <td><code>[ 1 2 3 ] 10 MUL</code></td>
@@ -117,13 +110,83 @@
                                     <td class="notes">A number pairs with every element.</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ 1 2 ] [ 3 4 ] ADD</code></td>
-                                    <td><code>[ 4/1 6/1 ]</code></td>
-                                    <td class="notes">Two Vectors of the same length pair element by element.</td>
+                                    <td><code>3 5 MIN</code></td>
+                                    <td><code>3/1</code></td>
+                                    <td class="notes"></td>
                                 </tr>
                                 <tr>
-                                    <td><code>1 2 LT</code></td>
-                                    <td><code>TRUE</code></td>
+                                    <td><code>2 1 GT 10 0 IF</code></td>
+                                    <td><code>10/1</code></td>
+                                    <td class="notes">2 > 1, so 10.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Open in Playground</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tanks" class="ref-page">
+                    <h2><span class="secnum">3</span> Tanks and pipes</h2>
+                    <p><code>level 'NAME' TANK</code> declares a tank (a stock, an integrator). <code>[ rate ] 'FROM' 'TO' 'NAME' PIPE</code> connects two tanks with a pipe; <code>'OUTSIDE'</code> is the world beyond the model. A pipe only moves water, so the total is conserved unless a pipe touches the outside. Declaring the same name again refills or replaces it, so running a script twice does not double the plumbing. Inside a rate block a tank's name reads its level and a pipe's name its flow. An empty tank lets nothing out.</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>100 &#x27;BATH&#x27; TANK
+[ 5 ] &#x27;OUTSIDE&#x27; &#x27;BATH&#x27; &#x27;TAP&#x27; PIPE
+[ BATH 0.1 MUL ] &#x27;BATH&#x27; &#x27;OUTSIDE&#x27; &#x27;DRAIN&#x27; PIPE
+DRAIN</code></td>
+                                    <td><code>10/1</code></td>
+                                    <td class="notes">The drain's flow now: a tenth of 100.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>BATH</code></td>
+                                    <td><code>100/1</code></td>
+                                    <td class="notes">A tank's name pushes its level.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Open in Playground</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="run" class="ref-page">
+                    <h2><span class="secnum">4</span> RUN and time</h2>
+                    <p><code>duration dt RUN</code> lets the machine flow in continuous time (fourth-order Runge–Kutta). The Output area shows each tank's course as a sparkline, each pipe's final flow and the total in the tanks. The clock carries on, so several <code>RUN</code>s can change a parameter part way. <code>TIME</code> reads the clock; <code>REWIND</code> refills every tank to its declared level and sets the clock to 0.</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>100 &#x27;BATH&#x27; TANK
+[ 5 ] &#x27;OUTSIDE&#x27; &#x27;BATH&#x27; &#x27;TAP&#x27; PIPE
+[ BATH 0.1 MUL ] &#x27;BATH&#x27; &#x27;OUTSIDE&#x27; &#x27;DRAIN&#x27; PIPE
+30 0.1 RUN
+BATH</code></td>
+                                    <td><code>≈ 52489353/1000000</code></td>
+                                    <td class="notes">The level approaches 50, where inflow and outflow balance.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>TIME</code></td>
+                                    <td><code>30/1</code></td>
+                                    <td class="notes"></td>
+                                </tr>
+                                <tr>
+                                    <td><code>REWIND BATH</code></td>
+                                    <td><code>100/1</code></td>
                                     <td class="notes"></td>
                                 </tr>
                             </tbody>
@@ -135,30 +198,33 @@
                     </div>
                 </section>
 
-                <section id="stack-words" class="ref-page">
-                    <h2><span class="secnum">3</span> Stack and output</h2>
-                    <p><code>DUP</code> copies the top value, <code>DROP</code> discards it and <code>SWAP</code> exchanges the top two. <code>PRINT</code> writes the top value to the Output area.</p>
+                <section id="cams" class="ref-page">
+                    <h2><span class="secnum">5</span> Cams and conditions</h2>
+                    <p><code>x [ x0 y0 x1 y1 ... ] CAM</code> reads a value off a piecewise-linear curve, like the cams cut for MONIAC (held flat beyond its ends). <code>TIME</code> with <code>IF</code> makes a valve that opens at a given moment.</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
                             <thead>
-                                <tr><th>Sample code</th><th>Expected value</th><th>Notes</th></tr>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>1 DUP</code></td>
-                                    <td><code>1/1 1/1</code></td>
+                                    <td><code>5 [ 0 0 10 1 ] CAM</code></td>
+                                    <td><code>1/2</code></td>
                                     <td class="notes"></td>
                                 </tr>
                                 <tr>
-                                    <td><code>1 2 SWAP</code></td>
-                                    <td><code>2/1 1/1</code></td>
-                                    <td class="notes"></td>
+                                    <td><code>20 [ 0 0 10 1 ] CAM</code></td>
+                                    <td><code>1/1</code></td>
+                                    <td class="notes">Flat beyond the end.</td>
                                 </tr>
                                 <tr>
-                                    <td><code>&#x27;hello&#x27; PRINT</code></td>
-                                    <td><code></code></td>
-                                    <td class="notes">Writes hello to the Output area and leaves the stack empty.</td>
+                                    <td><code>0 &#x27;POOL&#x27; TANK
+[ TIME 5 GT 2 0 IF ] &#x27;OUTSIDE&#x27; &#x27;POOL&#x27; &#x27;VALVE&#x27; PIPE
+10 0.1 RUN
+POOL</code></td>
+                                    <td><code>≈ 9966667/1000000</code></td>
+                                    <td class="notes">2 per unit time flows in from t = 5: about 10.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -170,24 +236,74 @@
                 </section>
 
                 <section id="user-words" class="ref-page">
-                    <h2><span class="secnum">4</span> User words</h2>
-                    <p><code>DEF</code> takes a block and a name and defines a User word, which then appears in the Dictionary panel. <code>DEL</code> deletes one, and refuses while another User word still uses it. <code>MAP</code> runs a block on each element of a Vector.</p>
+                    <h2><span class="secnum">6</span> User words</h2>
+                    <p><code>DEF</code> takes a block and a name and defines a User word, listed in the Dictionary panel: use it for policy parameters and shared expressions. <code>DEL</code> deletes one, but refuses while another word or a pipe still uses it.</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
                             <thead>
-                                <tr><th>Sample code</th><th>Expected value</th><th>Notes</th></tr>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>[ DUP MUL ] &#x27;SQUARE&#x27; DEF 7 SQUARE</code></td>
-                                    <td><code>49/1</code></td>
-                                    <td class="notes">SQUARE is now in the Dictionary panel.</td>
+                                    <td><code>[ 0.25 ] &#x27;TAX-RATE&#x27; DEF 100 TAX-RATE MUL</code></td>
+                                    <td><code>25/1</code></td>
+                                    <td class="notes">TAX-RATE is added to the Dictionary panel.</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Open in Playground</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="moniac" class="ref-page">
+                    <h2><span class="secnum">7</span> A MONIAC-style economy</h2>
+                    <p>Five tanks (firms, households, treasury, idle balances, abroad) joined by eight pipes flow for 50 periods; then a tax cut, and 50 more. Investment is the idle balances times a rate read off a cam. The total water (money) stays at 1000. The same program is <code>examples/moniac.alg</code> in the repository.</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>Sample code</th><th>Expected</th><th>Notes</th></tr>
+                            </thead>
+                            <tbody>
                                 <tr>
-                                    <td><code>[ 1 2 3 ] [ DUP MUL ] MAP</code></td>
-                                    <td><code>[ 1/1 4/1 9/1 ]</code></td>
-                                    <td class="notes">The block runs once per element.</td>
+                                    <td><code># MONIAC 風の国民経済モデル。水 = お金。
+# タンクに貯まり、パイプを流れ、全体の水量はパイプが外界に触れない限り変わらない。
+
+# 政策パラメータ（ユーザーワード。Dictionary パネルに並ぶ）
+[ 0.25 ] &#x27;TAX-RATE&#x27; DEF
+[ 0.15 ] &#x27;SAVING-RATE&#x27; DEF
+[ 0.08 ] &#x27;IMPORT-RATE&#x27; DEF
+
+# タンク（ストック）
+400 &#x27;FIRMS&#x27; TANK          # 企業：生産と売上
+200 &#x27;HOUSEHOLDS&#x27; TANK     # 家計：手元の所得
+100 &#x27;TREASURY&#x27; TANK       # 国庫
+200 &#x27;SAVINGS&#x27; TANK        # 遊休残高（貯蓄）
+100 &#x27;FOREIGN&#x27; TANK        # 海外
+
+# パイプ（フロー）：[ 流量 ] &#x27;流出元&#x27; &#x27;流入先&#x27; &#x27;名前&#x27; PIPE
+[ FIRMS 0.5 MUL ]                 &#x27;FIRMS&#x27;      &#x27;HOUSEHOLDS&#x27; &#x27;INCOME&#x27;      PIPE
+[ INCOME TAX-RATE MUL ]           &#x27;HOUSEHOLDS&#x27; &#x27;TREASURY&#x27;   &#x27;TAX&#x27;         PIPE
+[ HOUSEHOLDS SAVING-RATE MUL ]    &#x27;HOUSEHOLDS&#x27; &#x27;SAVINGS&#x27;    &#x27;SAVING&#x27;      PIPE
+[ HOUSEHOLDS IMPORT-RATE MUL ]    &#x27;HOUSEHOLDS&#x27; &#x27;FOREIGN&#x27;    &#x27;IMPORTS&#x27;     PIPE
+[ HOUSEHOLDS 0.6 MUL ]            &#x27;HOUSEHOLDS&#x27; &#x27;FIRMS&#x27;      &#x27;CONSUMPTION&#x27; PIPE
+[ TREASURY 0.3 MUL ]              &#x27;TREASURY&#x27;   &#x27;FIRMS&#x27;      &#x27;SPENDING&#x27;    PIPE
+[ FOREIGN 0.2 MUL ]               &#x27;FOREIGN&#x27;    &#x27;FIRMS&#x27;      &#x27;EXPORTS&#x27;     PIPE
+# 投資：遊休残高が多いほど金利が下がり、投資の割合が上がる（MONIAC のカム）
+[ SAVINGS DUP [ 0 0.02 200 0.1 400 0.2 ] CAM MUL ] &#x27;SAVINGS&#x27; &#x27;FIRMS&#x27; &#x27;INVESTMENT&#x27; PIPE
+
+# 50 期間流す
+50 0.1 RUN
+
+# 減税してさらに 50 期間。流れは止めずに続きから
+[ 0.1 ] &#x27;TAX-RATE&#x27; DEF
+50 0.1 RUN</code></td>
+                                    <td><code></code></td>
+                                    <td class="notes">The Output area shows both runs.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -206,14 +322,17 @@
                     <li><a href="#intro">Introduction</a></li>
                     <li><a href="#values">1 Values</a></li>
                     <li><a href="#arithmetic">2 Arithmetic and comparison</a></li>
-                    <li><a href="#stack-words">3 Stack and output</a></li>
-                    <li><a href="#user-words">4 User words</a></li>
+                    <li><a href="#tanks">3 Tanks and pipes</a></li>
+                    <li><a href="#run">4 RUN and time</a></li>
+                    <li><a href="#cams">5 Cams and conditions</a></li>
+                    <li><a href="#user-words">6 User words</a></li>
+                    <li><a href="#moniac">7 A MONIAC-style economy</a></li>
                 </ul>
             </nav>
         </main>
 
         <footer class="ref-footer">
-            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Lycoris" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
+            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Analogia" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
     </footer>
 
 </body>

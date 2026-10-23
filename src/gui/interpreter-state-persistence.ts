@@ -3,30 +3,25 @@ import type { InterpreterStateSnapshot } from '../platform';
 import { getPlatform } from '../platform';
 import { collectUserWords, toError } from './interpreter-execution-utils';
 
-// These four words exist for one demonstration: a Word button's colour shows
+// These three words exist for one demonstration: a Word button's colour shows
 // that another Word calls it, and that is only visible once one seeded word
-// calls others. GREET over the three SAY words is the whole of it, so nothing
+// calls others. SPEND-RATE over the two rates is the whole of it, so nothing
 // else is seeded — a fresh dictionary is for the reader to fill.
 export const EXAMPLE_USER_WORDS: UserWord[] = [
-    // Hello-World family: teaches how words depend on other words. GREET is
-    // built purely by chaining the three SAY words, so while GREET exists
-    // none of them can be redefined or deleted (definitionConflict): the
-    // three are coloured as words something depends on.
+    // The rates of a MONIAC-style economy (examples/moniac.alg). SPEND-RATE is
+    // what households keep circulating once tax and saving are taken, so
+    // while it exists neither rate can be deleted (definitionConflict).
     {
-        name: 'SAY-HELLO',
-        definition: "'Hello' PRINT",
+        name: 'TAX-RATE',
+        definition: '0.25',
     },
     {
-        name: 'SAY-WORLD',
-        definition: "'World' PRINT",
+        name: 'SAVING-RATE',
+        definition: '0.15',
     },
     {
-        name: 'SAY-BANG',
-        definition: "'!' PRINT",
-    },
-    {
-        name: 'GREET',
-        definition: 'SAY-HELLO SAY-WORLD SAY-BANG',
+        name: 'SPEND-RATE',
+        definition: '1 TAX-RATE SUB SAVING-RATE SUB',
     },
 ];
 
