@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Rust + TypeScript WebAssembly playground">
+    <meta name="description" content="Analogia — a language for wiring up MONIAC-style analog machines">
     <meta name="theme-color" content="#6b5b95">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-    <title>Ajisai</title>
+    <title>Analogia</title>
     <link rel="stylesheet" href="/src/styles/playground.css">
 </head>
 <body data-active-area="input">
@@ -16,11 +16,11 @@
          the header badge's tooltip.
          Click, tap, or any key skips it; see initSplashScreen() in
          src/entry/entry-common.ts. -->
-    <div id="splash-screen" class="splash-screen utsuroi" role="dialog" aria-modal="true" aria-label="Ajisai" tabindex="-1" hidden>
+    <div id="splash-screen" class="splash-screen utsuroi" role="dialog" aria-modal="true" aria-label="Analogia" tabindex="-1" hidden>
         <div class="splash-content">
             <img src="./images/QR_341216.png" alt="" class="splash-logo">
             <div class="splash-heading">
-                <p class="splash-title">Ajisai</p>
+                <p class="splash-title">Analogia</p>
                 <span class="version">Playground</span>
             </div>
             <p class="splash-version-line" id="splash-version-line" hidden></p>
@@ -33,9 +33,9 @@
         <header>
             <div class="app-header-top">
                 <div class="app-brand-meta">
-                    <a href="https://masamoto1982.github.io/Ajisai/" class="app-brand-block" aria-label="Ajisai">
+                    <a href="https://masamoto1982.github.io/Analogia/" class="app-brand-block" aria-label="Analogia">
                         <img src="./images/QR_341216.png" alt="" class="logo">
-                        <h1>Ajisai</h1>
+                        <h1>Analogia</h1>
                     </a>
                     <!-- Carries the full build and resource-limit detail in its
                          tooltip (the splash shows only a curated summary). -->
@@ -85,7 +85,7 @@
                 </section>
                 <section id="input-panel" class="input-area" aria-label="Input" tabindex="0">
                     <h2 class="visually-hidden">Input</h2>
-                    <textarea id="code-input" aria-label="Ajisai code input" placeholder="Enter code here" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+                    <textarea id="code-input" aria-label="Analogia code input" placeholder="Enter code here" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
                     <!-- The empty editor's cheat sheet with keys drawn as keycaps;
                          the textarea's placeholder carries the same text for
                          assistive technology (src/gui/editor-hint.ts). -->
@@ -145,7 +145,7 @@
             </div>
         </main>
         <footer>
-            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Ajisai" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
+            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Analogia" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
         </footer>
         <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
         <script>

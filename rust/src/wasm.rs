@@ -6,7 +6,7 @@
 //! the JS engine's own `JSON.parse`, which keeps this file free of
 //! per-field `Reflect` calls.
 
-use crate::interpreter::{Interpreter, CORE_WORDS, MAX_CALL_DEPTH};
+use crate::interpreter::{Interpreter, Snapshot, CORE_WORDS, MAX_CALL_DEPTH, MAX_RUN_STEPS};
 use crate::value::Value;
 use serde::Deserialize;
 use serde_json::json;
@@ -84,6 +84,7 @@ impl AjisaiInterpreter {
             "limits": {
                 "maxExecutionSteps": self.interpreter.max_steps(),
                 "maxCallDepth": MAX_CALL_DEPTH,
+                "maxRunSteps": MAX_RUN_STEPS,
             },
         })
         .to_string()
@@ -130,20 +131,14 @@ impl AjisaiInterpreter {
         to_js(self.stack_json())
     }
 
-    /// `[name, hasDependents]` for each User word.
+    /// `[name, hasDependents]` for each User word: whether another word or
+    /// a pipe still reads it.
     pub fn collect_user_words_info(&self) -> JsValue {
-        let words = &self.interpreter.words;
-        let info: Vec<_> = words
+        let info: Vec<_> = self
+            .interpreter
+            .words
             .keys()
-            .map(|name| {
-                let used = words.iter().any(|(other, w)| {
-                    other != name
-                        && w.body
-                            .iter()
-                            .any(|v| matches!(v, Value::Symbol(s) if s == name))
-                });
-                json!([name, used])
-            })
+            .map(|name| json!([name, self.interpreter.user_of(name).is_some()]))
             .collect();
         to_js(json!(info))
     }
@@ -197,14 +192,17 @@ impl AjisaiInterpreter {
         }
     }
 
-    /// The stack in a form `restore_stack_snapshot` reads back exactly.
+    /// The stack and the machine (its tanks, pipes and clock), in a form
+    /// `restore_stack_snapshot` reads back exactly. The playground carries
+    /// this string into its worker and back, so the machine lives in it too.
     pub fn snapshot_stack(&self) -> String {
-        serde_json::to_string(&self.interpreter.stack).expect("values always serialize")
+        serde_json::to_string(&self.interpreter.snapshot()).expect("values always serialize")
     }
 
     pub fn restore_stack_snapshot(&mut self, snapshot_json: &str) -> Result<(), JsValue> {
-        self.interpreter.stack =
+        let snapshot: Snapshot =
             serde_json::from_str(snapshot_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        self.interpreter.restore(snapshot);
         Ok(())
     }
 

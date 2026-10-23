@@ -7,6 +7,7 @@
 //! same protocol (`src/wasm-interpreter-types.ts`).
 
 pub mod interpreter;
+pub mod model;
 pub mod tokenizer;
 pub mod value;
 

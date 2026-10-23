@@ -8,7 +8,8 @@ export class AjisaiInterpreter {
     collect_core_words_info(): any;
     collect_stack(): any;
     /**
-     * `[name, hasDependents]` for each User word.
+     * `[name, hasDependents]` for each User word: whether another word or
+     * a pipe still reads it.
      */
     collect_user_words_info(): any;
     collect_word_identities(): any;
@@ -36,7 +37,9 @@ export class AjisaiInterpreter {
     restore_user_words(words: any): any;
     set_max_execution_steps(steps: number): void;
     /**
-     * The stack in a form `restore_stack_snapshot` reads back exactly.
+     * The stack and the machine (its tanks, pipes and clock), in a form
+     * `restore_stack_snapshot` reads back exactly. The playground carries
+     * this string into its worker and back, so the machine lives in it too.
      */
     snapshot_stack(): string;
 }

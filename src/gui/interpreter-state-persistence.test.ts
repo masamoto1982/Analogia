@@ -240,11 +240,13 @@ describe('EXAMPLE_USER_WORDS', () => {
     it('only calls user words that are seeded alongside it', () => {
         // A word-shaped token is either a Core word or another Example Word.
         // Core names are not enumerated here, but a call to a *removed* example
-        // (say GREET losing SAY-BANG) is caught: the dependency must be seeded.
-        const greet = EXAMPLE_USER_WORDS.find(w => w.name === 'GREET');
-        expect(greet).toBeDefined();
-        for (const token of tokenize(greet!.definition ?? '')) {
-            expect(exampleWordNames.has(token), `GREET calls unseeded ${token}`).toBe(true);
+        // (say SPEND-RATE losing SAVING-RATE) is caught: the dependency must be seeded.
+        const spend = EXAMPLE_USER_WORDS.find(w => w.name === 'SPEND-RATE');
+        expect(spend).toBeDefined();
+        const calls = tokenize(spend!.definition ?? '')
+            .filter(token => !NUMBER_LITERAL.test(token) && token !== 'SUB');
+        for (const token of calls) {
+            expect(exampleWordNames.has(token), `SPEND-RATE calls unseeded ${token}`).toBe(true);
         }
     });
 });

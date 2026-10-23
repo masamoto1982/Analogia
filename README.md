@@ -1,21 +1,34 @@
 ![Rust](docs/assets/badges/rust.svg) ![WebAssembly](docs/assets/badges/webassembly.svg) ![TypeScript](docs/assets/badges/typescript.svg) ![Tauri](docs/assets/badges/tauri.svg)
 
-# Lycoris
+# Analogia
 
-Rust で書いたコアを WebAssembly にして、TypeScript の Playground から動かすための雛形です。プログラミング言語 Ajisai の技術スタックと Playground の GUI をそのまま流用できるように切り出しています。
-
-同梱のRustコアは、Playground のすべての機能を動かすためだけの小さなスタック言語（サンプル）です。新しいプロジェクトでは `rust/src/` を自分のコアに差し替えて使います。
+MONIAC（フィリップス機）のような流体式アナログコンピュータを、テキストで組み立てて動かすプログラミング言語です。タンク（ストック）に量が貯まり、パイプ（フロー）がそれを流し、`RUN` で連続時間のまま時間を進めます。パイプは量を移すだけなので、外界につながらない限り全体の量は保存されます。
 
 ```
-[ DUP MUL ] 'SQUARE' DEF
-[ 1 2 3 ] [ SQUARE ] MAP     # [ 1/1 4/1 9/1 ]
+100 'BATH' TANK                                  # 水位 100 のタンク
+[ 5 ] 'OUTSIDE' 'BATH' 'TAP' PIPE                # 外から毎時 5 流れ込む
+[ BATH 0.1 MUL ] 'BATH' 'OUTSIDE' 'DRAIN' PIPE   # 水位の 1 割が流れ出る
+30 0.1 RUN                                       # 30 時間流す（RK4）
 ```
+
+```
+RUN t = 0 → 30  (dt 0.1, 300 steps)
+  BATH         100 ██▇▆▆▆▅▅▅▄▄▄▄▃▃▃▃▃▂▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁ 52.49
+  flows at t = 30
+  TAP    OUTSIDE → BATH          5
+  DRAIN  BATH → OUTSIDE       5.25
+  total in tanks  100 → 52.49
+```
+
+言語の設計は [`docs/design.md`](docs/design.md)、MONIAC 風の国民経済モデルは [`examples/moniac.alg`](examples/moniac.alg) にあります。Rust のコアを WebAssembly にして、TypeScript の Playground（ブラウザ、または Tauri のデスクトップアプリ）から動かします。
 
 ## 構成
 
 | 場所 | 役割 |
 |---|---|
-| `rust/` | コア。`src/interpreter.rs` などがサンプル言語、`src/wasm.rs` が Playground とのやり取り（`wasm` feature で有効） |
+| `rust/` | コア。`src/interpreter.rs` が言語（ワードと RK4 シミュレータ）、`src/model.rs` がタンクとパイプ、`src/wasm.rs` が Playground とのやり取り（`wasm` feature で有効） |
+| `examples/` | サンプルプログラム（`moniac.alg`） |
+| `docs/design.md` | 言語の設計メモ |
 | `src/wasm/generated/` | `npm run build:wasm` が書き出す wasm バンドル（コミット対象） |
 | `src/wasm-interpreter-types.ts` | Rust と TypeScript の間の約束（インタープリタのメソッドと値の形） |
 | `src/workers/` | wasm を Web Worker で実行する仕組み。重い処理や無限ループでも GUI が固まらず、タイムアウトと中断ができる |
@@ -25,12 +38,6 @@ Rust で書いたコアを WebAssembly にして、TypeScript の Playground か
 | `public/docs/` | Playground から開くリファレンス（日英）。例は「Playground で開く」でエディタに読み込める |
 | `src-tauri/` | デスクトップアプリ（Tauri） |
 | `docs/dev/gui-current-design-memory.md` | GUI の設計メモ |
-
-## コアを差し替えるとき
-
-1. `rust/src/` を自分のコアに書き換える。`src/wasm.rs` は `src/wasm-interpreter-types.ts` の `AjisaiInterpreter` と同じメソッドと戻り値の形を保つ
-2. `npm run build:wasm` で `src/wasm/generated/` を作り直してコミットする
-3. `public/docs/` のリファレンスと `src/gui/interpreter-state-persistence.ts` のサンプルワード（`EXAMPLE_USER_WORDS`）を新しい言語に合わせる
 
 ## ビルドと実行
 

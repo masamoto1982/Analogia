@@ -29,7 +29,8 @@ export class AjisaiInterpreter {
         return ret;
     }
     /**
-     * `[name, hasDependents]` for each User word.
+     * `[name, hasDependents]` for each User word: whether another word or
+     * a pipe still reads it.
      * @returns {any}
      */
     collect_user_words_info() {
@@ -155,7 +156,9 @@ export class AjisaiInterpreter {
         wasm.ajisaiinterpreter_set_max_execution_steps(this.__wbg_ptr, steps);
     }
     /**
-     * The stack in a form `restore_stack_snapshot` reads back exactly.
+     * The stack and the machine (its tanks, pipes and clock), in a form
+     * `restore_stack_snapshot` reads back exactly. The playground carries
+     * this string into its worker and back, so the machine lives in it too.
      * @returns {string}
      */
     snapshot_stack() {

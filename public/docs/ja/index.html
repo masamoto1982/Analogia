@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="サンプル言語のリファレンス — 例はそのまま Playground で実行できます">
+    <meta name="description" content="Analogia のリファレンス — 例はそのまま Playground で実行できます">
     <meta name="theme-color" content="#6b5b95">
     <title>リファレンス</title>
 
     <!--
-      The Reference for the sample language. The English and Japanese
+      The Reference for Analogia. The English and Japanese
       versions share structure, ids and sample code; only the prose differs.
       Look and behavior live in ../reference.css and ../reference.js.
       Mathematics is LaTeX typeset by the self-hosted KaTeX: only \( ... \)
@@ -26,7 +26,7 @@
             <div class="app-brand-meta">
                 <a href="../../index.html" class="app-brand-block" aria-label="Playground">
                     <img src="../../images/QR_341216.png" alt="" class="logo" aria-hidden="true">
-                    <h1>Ajisai</h1>
+                    <h1>Analogia</h1>
                 </a>
                 <span class="ref-tagline">Reference</span>
                 <label for="lang-select" class="visually-hidden">言語を選択 / Select language</label>
@@ -50,15 +50,14 @@
             <article class="ref-article">
                 <section id="intro" class="ref-page">
                     <h2>はじめに</h2>
-                    <p>このテンプレートに同梱している<strong>サンプル言語</strong>のリファレンスです。Playground のすべての機能を動かすためだけの、小さなスタック言語です。<code>rust/</code> の Rust コアを自分の言語に差し替えたら、このページもそれに合わせて書き換えてください。</p>
-                    <p>プログラムは空白で区切った要素の並びで、左から順に評価されます。数値・文字列・Vector はスタックに積まれ、名前はそのワードを実行します。</p>
-                    <p>各例の <strong>Playground で開く</strong> ボタンでコードをエディタに読み込めます。<strong>期待値</strong> 列は、実行後のスタックを Stack エリアの表示どおりに示します。</p>
+                    <p><strong>Analogia</strong> は、MONIAC（フィリップス機）のような流体式アナログコンピュータを組み立てて動かす言語です。タンクに量が貯まり、パイプがそれを流し、<code>RUN</code> で連続時間のまま時間を進めます。</p>
+                    <p>プログラムは空白で区切った要素の並びで、左から順に評価されます（後置記法）。数値・文字列・ブロックはスタックに積まれ、名前はそのワードを実行します。</p>
+                    <p>各例の <strong>Playground で開く</strong> ボタンで最初の行のコードをエディタに読み込めます。<strong>期待値</strong> 列は、その行までを実行したあとのスタックの先頭を Stack エリアの表示どおりに示します。</p>
                 </section>
 
                 <section id="values" class="ref-page">
                     <h2><span class="secnum">1</span> 値</h2>
-                    <p>数値は正確な分数です。<code>1/3</code>、<code>0.25</code>、<code>42</code> はいずれも丸めずに保持され、<code>分子/分母</code> の形で表示されます。文字列はシングルクォートで囲みます。<code>TRUE</code>、<code>FALSE</code>、<code>NIL</code> も値です。</p>
-                    <p><code>[ ... ]</code> は Vector を作ります。中身は実行されず、名前は名前のまま残ります。コードのブロックはこの形で書きます。</p>
+                    <p>数値は連続量（倍精度の浮動小数点数）です。<code>1/4</code>、<code>0.25</code>、<code>2e-3</code> と書けます。Stack エリアでは小数 6 桁までの分数で表示し、丸めたときは <code>≈</code> が付きます。文字列はシングルクォートで囲み、<code>TRUE</code>・<code>FALSE</code>・<code>NIL</code> も値です。<code>[ ... ]</code> は実行されないブロックで、パイプの流量式やユーザーワードの本体になります。</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
@@ -68,17 +67,17 @@
                             <tbody>
                                 <tr>
                                     <td><code>0.1 0.2 ADD</code></td>
-                                    <td><code>3/10</code></td>
-                                    <td class="notes">小数も正確で、丸め誤差はありません。</td>
+                                    <td><code>≈ 3/10</code></td>
+                                    <td class="notes">浮動小数点数の和なので、ごくわずかな誤差があり ≈ が付きます。</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ 1 2 3 ]</code></td>
-                                    <td><code>[ 1/1 2/1 3/1 ]</code></td>
-                                    <td class="notes">3 つの数値の Vector。</td>
+                                    <td><code>1 3 DIV</code></td>
+                                    <td><code>≈ 333333/1000000</code></td>
+                                    <td class="notes">丸めたので ≈ が付きます。</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ DUP MUL ]</code></td>
-                                    <td><code>[ DUP MUL ]</code></td>
+                                    <td><code>[ BATH 0.1 MUL ]</code></td>
+                                    <td><code>[ BATH 1/10 MUL ]</code></td>
                                     <td class="notes">ブロック。名前は実行されずに残ります。</td>
                                 </tr>
                             </tbody>
@@ -92,8 +91,7 @@
 
                 <section id="arithmetic" class="ref-page">
                     <h2><span class="secnum">2</span> 算術と比較</h2>
-                    <p><code>ADD</code>・<code>SUB</code>・<code>MUL</code>・<code>DIV</code> は 2 つの数値を取ります。どちらかが Vector なら要素ごとに計算し、数値は各要素と組になります。ゼロ除算はエラーです。</p>
-                    <p><code>EQ</code> は 2 つの値が等しいか、<code>LT</code> は 2 番目の数値が先頭より小さいかを返します。</p>
+                    <p><code>ADD</code>・<code>SUB</code>・<code>MUL</code>・<code>DIV</code>・<code>MIN</code>・<code>MAX</code> は 2 つの数値を取ります（どちらかが Vector なら要素ごと）。<code>EQ</code>・<code>LT</code>・<code>GT</code> は真偽値を返し、<code>条件 a b IF</code> は条件が真なら a、偽なら b を残します。<code>DUP</code>・<code>DROP</code>・<code>SWAP</code> はスタックを操作し、<code>PRINT</code> は Output エリアに書きます。</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
@@ -104,12 +102,7 @@
                                 <tr>
                                     <td><code>3 4 ADD</code></td>
                                     <td><code>7/1</code></td>
-                                    <td class="notes">2 つのオペランドを消費して和を積みます。</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1 3 DIV</code></td>
-                                    <td><code>1/3</code></td>
-                                    <td class="notes">除算も正確です。</td>
+                                    <td class="notes"></td>
                                 </tr>
                                 <tr>
                                     <td><code>[ 1 2 3 ] 10 MUL</code></td>
@@ -117,13 +110,83 @@
                                     <td class="notes">数値は各要素と組になります。</td>
                                 </tr>
                                 <tr>
-                                    <td><code>[ 1 2 ] [ 3 4 ] ADD</code></td>
-                                    <td><code>[ 4/1 6/1 ]</code></td>
-                                    <td class="notes">同じ長さの Vector 同士は要素ごとに計算します。</td>
+                                    <td><code>3 5 MIN</code></td>
+                                    <td><code>3/1</code></td>
+                                    <td class="notes"></td>
                                 </tr>
                                 <tr>
-                                    <td><code>1 2 LT</code></td>
-                                    <td><code>TRUE</code></td>
+                                    <td><code>2 1 GT 10 0 IF</code></td>
+                                    <td><code>10/1</code></td>
+                                    <td class="notes">2 > 1 なので 10。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Playground で開く</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tanks" class="ref-page">
+                    <h2><span class="secnum">3</span> タンクとパイプ</h2>
+                    <p><code>水位 '名前' TANK</code> はタンク（ストック、積分器）を宣言します。<code>[ 流量 ] '流出元' '流入先' '名前' PIPE</code> はタンクの間をパイプでつなぎます。<code>'OUTSIDE'</code> はモデルの外の世界です。パイプは量を移すだけなので、外界に触れない限り全体の量は保存されます。同じ名前でもう一度宣言すると入れ直し・付け替えになるので、スクリプトを何度実行しても配管は増えません。流量ブロックの中ではタンク名がその時点の水位を、パイプ名がその時点の流量を読みます。空のタンクからは流れません。</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>サンプルコード</th><th>期待値</th><th>備考</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>100 &#x27;BATH&#x27; TANK
+[ 5 ] &#x27;OUTSIDE&#x27; &#x27;BATH&#x27; &#x27;TAP&#x27; PIPE
+[ BATH 0.1 MUL ] &#x27;BATH&#x27; &#x27;OUTSIDE&#x27; &#x27;DRAIN&#x27; PIPE
+DRAIN</code></td>
+                                    <td><code>10/1</code></td>
+                                    <td class="notes">排水口の今の流量（水位 100 の 1 割）。</td>
+                                </tr>
+                                <tr>
+                                    <td><code>BATH</code></td>
+                                    <td><code>100/1</code></td>
+                                    <td class="notes">タンク名は水位を積みます。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Playground で開く</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="run" class="ref-page">
+                    <h2><span class="secnum">4</span> RUN と時間</h2>
+                    <p><code>期間 刻み RUN</code> は機械を連続時間で流します（4 次のルンゲ＝クッタ法）。Output エリアに各タンクの推移のスパークライン、各パイプの最終流量、全体の水量を表示します。時計は続きから進むので、<code>RUN</code> を重ねて途中でパラメータを変えられます。<code>TIME</code> は時計を読み、<code>REWIND</code> は全タンクを宣言時の水位に戻して時計を 0 にします。</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>サンプルコード</th><th>期待値</th><th>備考</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>100 &#x27;BATH&#x27; TANK
+[ 5 ] &#x27;OUTSIDE&#x27; &#x27;BATH&#x27; &#x27;TAP&#x27; PIPE
+[ BATH 0.1 MUL ] &#x27;BATH&#x27; &#x27;OUTSIDE&#x27; &#x27;DRAIN&#x27; PIPE
+30 0.1 RUN
+BATH</code></td>
+                                    <td><code>≈ 52489353/1000000</code></td>
+                                    <td class="notes">水位は 50（流入と流出が釣り合う点）に近づきます。</td>
+                                </tr>
+                                <tr>
+                                    <td><code>TIME</code></td>
+                                    <td><code>30/1</code></td>
+                                    <td class="notes"></td>
+                                </tr>
+                                <tr>
+                                    <td><code>REWIND BATH</code></td>
+                                    <td><code>100/1</code></td>
                                     <td class="notes"></td>
                                 </tr>
                             </tbody>
@@ -135,9 +198,9 @@
                     </div>
                 </section>
 
-                <section id="stack-words" class="ref-page">
-                    <h2><span class="secnum">3</span> スタックと出力</h2>
-                    <p><code>DUP</code> は先頭の値を複製し、<code>DROP</code> は捨て、<code>SWAP</code> は上の 2 つを入れ替えます。<code>PRINT</code> は先頭の値を Output エリアに書き出します。</p>
+                <section id="cams" class="ref-page">
+                    <h2><span class="secnum">5</span> カムと条件</h2>
+                    <p><code>x [ x0 y0 x1 y1 ... ] CAM</code> は MONIAC のカム板のように、区分線形の曲線から値を読みます（両端の外は一定）。<code>TIME</code> と <code>IF</code> を組み合わせると、ある時刻から開くバルブが書けます。</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
@@ -146,19 +209,22 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>1 DUP</code></td>
-                                    <td><code>1/1 1/1</code></td>
+                                    <td><code>5 [ 0 0 10 1 ] CAM</code></td>
+                                    <td><code>1/2</code></td>
                                     <td class="notes"></td>
                                 </tr>
                                 <tr>
-                                    <td><code>1 2 SWAP</code></td>
-                                    <td><code>2/1 1/1</code></td>
-                                    <td class="notes"></td>
+                                    <td><code>20 [ 0 0 10 1 ] CAM</code></td>
+                                    <td><code>1/1</code></td>
+                                    <td class="notes">曲線の端より先は一定。</td>
                                 </tr>
                                 <tr>
-                                    <td><code>&#x27;hello&#x27; PRINT</code></td>
-                                    <td><code></code></td>
-                                    <td class="notes">Output エリアに hello と表示され、スタックは空になります。</td>
+                                    <td><code>0 &#x27;POOL&#x27; TANK
+[ TIME 5 GT 2 0 IF ] &#x27;OUTSIDE&#x27; &#x27;POOL&#x27; &#x27;VALVE&#x27; PIPE
+10 0.1 RUN
+POOL</code></td>
+                                    <td><code>≈ 9966667/1000000</code></td>
+                                    <td class="notes">t = 5 から毎時 2 流れ込み、約 10 になります。</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -170,8 +236,8 @@
                 </section>
 
                 <section id="user-words" class="ref-page">
-                    <h2><span class="secnum">4</span> ユーザーワード</h2>
-                    <p><code>DEF</code> はブロックと名前を取ってユーザーワードを定義し、Dictionary パネルに表示します。<code>DEL</code> は削除しますが、他のユーザーワードが使っている間は拒否します。<code>MAP</code> は Vector の各要素にブロックを実行します。</p>
+                    <h2><span class="secnum">6</span> ユーザーワード</h2>
+                    <p><code>DEF</code> はブロックと名前を取ってユーザーワードを定義し、Dictionary パネルに並べます。政策パラメータや共通の式に使います。<code>DEL</code> は削除しますが、他のワードやパイプが使っている間は拒否します。</p>
                     <div class="sample">
                         <div class="ref-table-wrap">
                         <table class="ref-table">
@@ -180,14 +246,64 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>[ DUP MUL ] &#x27;SQUARE&#x27; DEF 7 SQUARE</code></td>
-                                    <td><code>49/1</code></td>
-                                    <td class="notes">SQUARE が Dictionary パネルに追加されます。</td>
+                                    <td><code>[ 0.25 ] &#x27;TAX-RATE&#x27; DEF 100 TAX-RATE MUL</code></td>
+                                    <td><code>25/1</code></td>
+                                    <td class="notes">TAX-RATE が Dictionary パネルに追加されます。</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="sample-actions">
+                            <a class="btn js-open-playground" href="../../index.html">Playground で開く</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="moniac" class="ref-page">
+                    <h2><span class="secnum">7</span> MONIAC 風の経済</h2>
+                    <p>企業・家計・国庫・遊休残高・海外の 5 つのタンクを 8 本のパイプでつなぎ、50 期間流したあとで減税してさらに 50 期間流します。投資は遊休残高をカムに通した割合で決まります。全体の水量（お金）は 1000 のまま保たれます。リポジトリの <code>examples/moniac.alg</code> と同じものです。</p>
+                    <div class="sample">
+                        <div class="ref-table-wrap">
+                        <table class="ref-table">
+                            <thead>
+                                <tr><th>サンプルコード</th><th>期待値</th><th>備考</th></tr>
+                            </thead>
+                            <tbody>
                                 <tr>
-                                    <td><code>[ 1 2 3 ] [ DUP MUL ] MAP</code></td>
-                                    <td><code>[ 1/1 4/1 9/1 ]</code></td>
-                                    <td class="notes">ブロックは要素ごとに 1 回実行されます。</td>
+                                    <td><code># MONIAC 風の国民経済モデル。水 = お金。
+# タンクに貯まり、パイプを流れ、全体の水量はパイプが外界に触れない限り変わらない。
+
+# 政策パラメータ（ユーザーワード。Dictionary パネルに並ぶ）
+[ 0.25 ] &#x27;TAX-RATE&#x27; DEF
+[ 0.15 ] &#x27;SAVING-RATE&#x27; DEF
+[ 0.08 ] &#x27;IMPORT-RATE&#x27; DEF
+
+# タンク（ストック）
+400 &#x27;FIRMS&#x27; TANK          # 企業：生産と売上
+200 &#x27;HOUSEHOLDS&#x27; TANK     # 家計：手元の所得
+100 &#x27;TREASURY&#x27; TANK       # 国庫
+200 &#x27;SAVINGS&#x27; TANK        # 遊休残高（貯蓄）
+100 &#x27;FOREIGN&#x27; TANK        # 海外
+
+# パイプ（フロー）：[ 流量 ] &#x27;流出元&#x27; &#x27;流入先&#x27; &#x27;名前&#x27; PIPE
+[ FIRMS 0.5 MUL ]                 &#x27;FIRMS&#x27;      &#x27;HOUSEHOLDS&#x27; &#x27;INCOME&#x27;      PIPE
+[ INCOME TAX-RATE MUL ]           &#x27;HOUSEHOLDS&#x27; &#x27;TREASURY&#x27;   &#x27;TAX&#x27;         PIPE
+[ HOUSEHOLDS SAVING-RATE MUL ]    &#x27;HOUSEHOLDS&#x27; &#x27;SAVINGS&#x27;    &#x27;SAVING&#x27;      PIPE
+[ HOUSEHOLDS IMPORT-RATE MUL ]    &#x27;HOUSEHOLDS&#x27; &#x27;FOREIGN&#x27;    &#x27;IMPORTS&#x27;     PIPE
+[ HOUSEHOLDS 0.6 MUL ]            &#x27;HOUSEHOLDS&#x27; &#x27;FIRMS&#x27;      &#x27;CONSUMPTION&#x27; PIPE
+[ TREASURY 0.3 MUL ]              &#x27;TREASURY&#x27;   &#x27;FIRMS&#x27;      &#x27;SPENDING&#x27;    PIPE
+[ FOREIGN 0.2 MUL ]               &#x27;FOREIGN&#x27;    &#x27;FIRMS&#x27;      &#x27;EXPORTS&#x27;     PIPE
+# 投資：遊休残高が多いほど金利が下がり、投資の割合が上がる（MONIAC のカム）
+[ SAVINGS DUP [ 0 0.02 200 0.1 400 0.2 ] CAM MUL ] &#x27;SAVINGS&#x27; &#x27;FIRMS&#x27; &#x27;INVESTMENT&#x27; PIPE
+
+# 50 期間流す
+50 0.1 RUN
+
+# 減税してさらに 50 期間。流れは止めずに続きから
+[ 0.1 ] &#x27;TAX-RATE&#x27; DEF
+50 0.1 RUN</code></td>
+                                    <td><code></code></td>
+                                    <td class="notes">Output エリアに 2 回分の推移が表示されます。</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -206,14 +322,17 @@
                     <li><a href="#intro">はじめに</a></li>
                     <li><a href="#values">1 値</a></li>
                     <li><a href="#arithmetic">2 算術と比較</a></li>
-                    <li><a href="#stack-words">3 スタックと出力</a></li>
-                    <li><a href="#user-words">4 ユーザーワード</a></li>
+                    <li><a href="#tanks">3 タンクとパイプ</a></li>
+                    <li><a href="#run">4 RUN と時間</a></li>
+                    <li><a href="#cams">5 カムと条件</a></li>
+                    <li><a href="#user-words">6 ユーザーワード</a></li>
+                    <li><a href="#moniac">7 MONIAC 風の経済</a></li>
                 </ul>
             </nav>
         </main>
 
         <footer class="ref-footer">
-            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Lycoris" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
+            <span>&copy; <span id="footer-year"></span> <a href="https://github.com/masamoto1982/Analogia" target="_blank" rel="noopener noreferrer">masamoto yamashiro</a></span>
     </footer>
 
 </body>
